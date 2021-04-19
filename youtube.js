@@ -1,20 +1,15 @@
 const fs = require('fs')
 const ytdl = require('ytdl-core')
 
-const videoURL = 'https://www.youtube.com/watch?v=qrI2wuWsuBc'
-
-const downloadmp3 = async function(url){
-  const data = await ytdl.getBasicInfo(videoURL)      //waiting for song information
-  const {album, song, artist} = data.videoDetails.media
-  const title = `[${album}]${song}-${artist}`
+const downloadmp3 = async function(url, singer){
+  const data = await ytdl.getBasicInfo(url)      //waiting for song information
+  const {song, artist} = data.videoDetails.media
+  const title = song !== undefined ? `${song} - ${artist}` : `${data.videoDetails.title} - ${singer}`
   ytdl(url, {
-    format: 'mp3',
+    format: 'mp4',
     filter: 'audioonly',
-  }).pipe(fs.createWriteStream(`${title}.mp3`))
+  }).pipe(fs.createWriteStream(`./tracks/${title}.mp4`))
+  console.log(`${title}.mp4 is downloaded!`)
 }
 
-downloadmp3(videoURL)
-// await ytdl(videoURL, {
-//   format: 'mp3',
-//   filter: 'audioonly'
-// }).pipe(fs.createWriteStream('song.mp3'))
+module.exports = downloadmp3
